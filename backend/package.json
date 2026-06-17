@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "jest --coverage"
   },
   "keywords": [
     "express",
@@ -20,7 +21,10 @@
     "dotenv": "^16.0.3",
     "uuid": "^9.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "supertest": "^6.3.3"
+  },
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=9.0.0"

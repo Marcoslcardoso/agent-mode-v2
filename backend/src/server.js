@@ -1,43 +1,51 @@
 require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
 const path = require("path");
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+// If tests import app, use the exported app; otherwise create and listen
+let app;
+try {
+  // prefer exported app if present
+  app = require("./app");
+} catch (e) {
+  const express = require("express");
+  const cors = require("cors");
+  app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+  const PORT = process.env.PORT || 3001;
 
-// Servir arquivos estáticos da pasta storage
-app.use("/storage", express.static(path.join(__dirname, "../storage")));
+  // Middleware
+  app.use(cors());
+  app.use(express.json());
 
-// Routes
-const validacaoRoutes = require("./routes/validacao");
-const documentosRoutes = require("./routes/documentos");
+  // Servir arquivos estáticos da pasta storage
+  app.use("/storage", express.static(path.join(__dirname, "../storage")));
 
-app.use("/api", validacaoRoutes);
-app.use("/api", documentosRoutes);
+  // Routes
+  const validacaoRoutes = require("./routes/validacao");
+  const documentosRoutes = require("./routes/documentos");
 
-// Health check
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    message: "Servidor funcionando corretamente",
+  app.use("/api", validacaoRoutes);
+  app.use("/api", documentosRoutes);
+
+  // Health check
+  app.get("/health", (req, res) => {
+    res.status(200).json({
+      status: "ok",
+      message: "Servidor funcionando corretamente",
+    });
   });
-});
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Rota não encontrada.",
+  // 404 handler
+  app.use((req, res) => {
+    res.status(404).json({
+      success: false,
+      message: "Rota não encontrada.",
+    });
   });
-});
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log(`URL base da API: http://localhost:${PORT}/api`);
-});
+  // Iniciar servidor
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`URL base da API: http://localhost:${PORT}/api`);
+  });
+}
